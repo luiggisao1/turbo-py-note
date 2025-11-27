@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 import json
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 
 @csrf_exempt
@@ -122,3 +125,17 @@ def logout_all(request):
         except Exception:
             pass
     return None
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me(request):
+    """Return the authenticated user's basic info."""
+    user = request.user
+    data = {
+        'id': user.pk,
+        'email': getattr(user, 'email', ''),
+        'username': getattr(user, 'username', None),
+        'first_name': getattr(user, 'first_name', ''),
+        'last_name': getattr(user, 'last_name', ''),
+    }
+    return Response(data)
