@@ -124,7 +124,8 @@ def logout_all(request):
             count += 1
         except Exception:
             pass
-    return None
+    # Return a JSON response summarizing how many tokens were blacklisted.
+    return JsonResponse({'detail': f'Blacklisted {count} token(s)'}, status=200)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
